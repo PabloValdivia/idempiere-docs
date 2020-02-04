@@ -1,0 +1,175 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Installing iDempiere for Execution &#8212; iDempiere  documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Installing iDempiere for Development" href="development.html" />
+    <link rel="prev" title="iDempiere installation" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="installing-idempiere-for-execution">
+<h1>Installing iDempiere for Execution<a class="headerlink" href="#installing-idempiere-for-execution" title="Permalink to this headline">¶</a></h1>
+<p>In order to run iDempiere you need to have a JDK (not JRE) version of java, and a proper database (PostgreSQL and Oracle are supported).</p>
+<p>The examples on this guide are using the following versions:
+- Ubuntu 18.04.2 64 bits
+- PostgreSQL 9.6.12
+- PostgreSQL contrib (for UUID support) - already included after postgresql 10
+- OpenJDK 11.0.2</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This guide can be used in other systems (even Windows) taking care of installing the corresponding packages and using corresponding commands.__</p>
+</div>
+</div></blockquote>
+<div class="section" id="install-ubuntu">
+<h2>Install Ubuntu<a class="headerlink" href="#install-ubuntu" title="Permalink to this headline">¶</a></h2>
+<p>Please refer to <cite>Ubuntu installation guide &lt;http://www.ubuntu.com/download&gt;</cite></p>
+<p>Downloaded and installed Ubuntu Server 18.04.2 LTS</p>
+</div>
+<div class="section" id="install-postgresql-9-6-12">
+<h2>Install PostgreSQL 9.6.12<a class="headerlink" href="#install-postgresql-9-6-12" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install">
+<h3>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h3>
+<p>iDempiere can also run with Oracle 11G or 12C, and also with PostgreSQL &gt;= 9.6, for this tutorial we use postgresql 9.6.10 - see <a class="reference external" href="http://www.postgresql.org/download/linux/ubuntu/">http://www.postgresql.org/download/linux/ubuntu/</a> for details</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>echo &quot;deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main&quot; | sudo tee /etc/apt/sources.list.d/pgdg.list
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo apt-get update
+# NOTE: alternatively you can install postgresql 10 11 or 12 (it includes contrib)
+# sudo apt-get install postgresql-12
+sudo apt-get install postgresql-9.6 postgresql-contrib-9.6
+sudo service postgresql start
+sudo update-rc.d postgresql defaults
+</pre></div>
+</div>
+</div>
+<div class="section" id="assign-a-password-to-user-postgres">
+<h3>Assign a password to user postgres<a class="headerlink" href="#assign-a-password-to-user-postgres" title="Permalink to this headline">¶</a></h3>
+<p>In order to create the database the installer needs to know the password of user postgres, by default this user doesn’t have a password in ubuntu (windows installer asks for a password).</p>
+<p>Please take note of the password you assign here as it will be required in the setup process:</p>
+<p>Steps are (replace your_chosen_password by your preferred):</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>sudo su - postgres
+psql -U postgres -c &quot;alter user postgres password &#39;your_chosen_password&#39;&quot;
+logout
+</pre></div>
+</div>
+</div>
+<div class="section" id="configure-pg-hba-conf">
+<h3>Configure pg_hba.conf<a class="headerlink" href="#configure-pg-hba-conf" title="Permalink to this headline">¶</a></h3>
+<p>After installing postgres you must check the correct configuration of /etc/postgresql/9.6/main/pg_hba.conf (or /etc/postgresql/11/main/pg_hba.conf in case you installed postgresql 11).</p>
+<p>The following line requires change of the authentication method:</p>
+<p>Please NOTE that some guides suggest configuring trust instead of md5 - but that creates a security issue on your postgres server.</p>
+<p>Alternatively, if you installed postgresql 10 or 11, it’s better recommended to use the authentication method scram-sha-256, this requires some additional configuration and checking of your client libraries in all systems accessing your postgresql server, for more information see IDEMPIERE-3959 and postgresql auth-password documentation.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">iDempiere</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview/overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Installation Guide</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Installing iDempiere for Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="development.html">Installing iDempiere for Development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html">Frequently Asked Questions (FAQ)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/administrator.html">Administrator's Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/user.html">User's Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/core.html">Core Team Handbook</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">iDempiere installation</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">iDempiere installation</a></li>
+      <li>Next: <a href="development.html" title="next chapter">Installing iDempiere for Development</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Diego Ruiz.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/installation/execution.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
